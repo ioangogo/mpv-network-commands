@@ -3,7 +3,7 @@
 local port = 82312
 
 local socket = require("socket")
-local conn = socket.udp();
+local conn = socket.tcp();
 
 conn:setsockname("*", port);
 conn:settimeout(0);
@@ -52,14 +52,25 @@ end
 
 -- maybe figure out how to set this up with a non-blocking select instead of polling the socket constantly
 function check_socket()
-    local data = conn:receive();
-    if (data ~= nil) then
+    while 1 do
+  -- wait for a connection from any client
+      local client = server:accept()
+  -- make sure we don't block waiting for this client's line
+      client:settimeout(0)
+  -- receive the line
+      local line, err = client:receive()
+      if (line ~= nil) then
         -- do things with data
-        do_things(data);
+        do_things(line);
+        end
+  -- if there was no error, send it back to the client
+      if not err then client:send(line .. "\n") end
+  -- done with client, close the object
+  --client:close()
     end
 end
 
-mp.add_periodic_timer(0.5, check_socket);
+check_socket
 
 function cleanup(event)
     conn:close();
