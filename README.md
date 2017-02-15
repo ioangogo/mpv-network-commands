@@ -1,3 +1,6 @@
+Why have I forked this
+====
+I have forked this as iamevn's project has been dead for 2 years, it is also not sutible for multiple MPD sessions as it uses a fixed port, I am also planning to convert it to a TCP based communications to allow 2 way communication
 mpv-network-commands
 ====================
 
